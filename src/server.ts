@@ -1,11 +1,10 @@
 import express from "express"
-import { Server } from "http";
 
 const app = express();
 
 
 
-const server: Server = app.listen(8080, () => {
+const server = app.listen(8080, () => {
     console.log("App running on port 8080")
 })
 
