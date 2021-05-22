@@ -1,5 +1,7 @@
 import express from "express"
 import { interviewRouter } from './routes/interviewRoutes';
+import mongoose from 'mongoose';
+require('dotenv').config()
 
 
 
@@ -14,6 +16,13 @@ app.use('/interview', interviewRouter)
 
 
 // Database Config
+
+mongoose.connect(`mongodb://127.0.0.1:27017/${process.env.DB_DATA_BASE}`, {useNewUrlParser: true, useUnifiedTopology: true})
+
+const db = mongoose.connection;
+db.on('error', console.error.bind(console, 'Console Error:'))
+db.once('open', () => console.log(`App connected to "${db.name}" database`))
+
 
 // Server Config
 

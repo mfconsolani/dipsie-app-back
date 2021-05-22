@@ -9,5 +9,5 @@ interviewRouter.get('/', (req, res) => {
 interviewRouter.post('/', (req, res) => {
     const { fullname, ...rest} = req.body
     console.log(fullname, rest);
-    res.status(200).json({'status':`info recieved: ${fullname} and ${...rest}`})
+    res.status(200).json({'status':`info received: ${fullname}`})
 })
