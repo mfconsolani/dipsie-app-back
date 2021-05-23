@@ -51,6 +51,5 @@ export const interviewSchema = new Schema({
         type: Date,
         default: Date.now
     }
-
 })
 

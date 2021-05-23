@@ -12,7 +12,7 @@ const candidateSchema = new Schema({
         unique: true
     },
     candidateInfo: {
-        type: interviewSchema,
+        type: [interviewSchema],
         required: true
     }
 }) 

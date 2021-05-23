@@ -9,23 +9,29 @@ interviewRouter.get('/', (req: Request, res: Response) => {
     res.send('Interview screen')
 });
 
-interviewRouter.post('/', (req: Request, res: Response) => {
+interviewRouter.post('/', async (req: Request, res: Response) => {
     const { candidate, id, info} = req.body
-    const candidateLoaded = new Candidate({
-        candidateName: candidate,
-        candidateId: id,
-        candidateInfo: info
-    })
-    candidateLoaded.save( (err:any, candidate:CandidateInterface) => {
-        if (err){
-            console.error(err)
-            return res.status(404).json({'Error': `${err.message}`})
-        }
-        console.log("candidate info saved", candidate);
-        res.status(200).json({
-            'Status':`Información guardada: ${candidate.candidateName} ${candidate.candidateId}`
+    const alreadyInDb = await Candidate.find({candidateId: parseInt(id)})
+    if (alreadyInDb[0]){
+        const updateInfo = await Candidate.updateOne({candidateId: parseInt(id)}, 
+        {$push: {candidateInfo: info}})
+        res.status(200).json({'Status': `Candidate info updated ${JSON.stringify(info)}`})
+    } else {
+        const candidateLoaded = new Candidate({
+            candidateName: candidate,
+            candidateId: id,
+            candidateInfo: info
         })
-    })
+        candidateLoaded.save( (err:any, candidate:CandidateInterface) => {
+            if (err){
+                console.error(err)
+                return res.status(404).json({'Error': `${err.message}`})
+            }
+            res.status(201).json({
+                'Status':`Información guardada: ${candidate.candidateName} ${candidate.candidateId}`
+            })
+        })
+    }
 })
 
 interviewRouter.get('/:idCandidato', async (req: Request, res: Response) => {
