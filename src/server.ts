@@ -1,13 +1,14 @@
 import express from "express"
 import { interviewRouter } from './routes/interviewRoutes';
 import mongoose from 'mongoose';
-require('dotenv').config()
+import dotenv from 'dotenv'
 
 
 
 // App Config
 
 const app = express();
+dotenv.config()
 
 // Middleware
 
@@ -17,7 +18,12 @@ app.use('/interview', interviewRouter)
 
 // Database Config
 
-mongoose.connect(`mongodb://127.0.0.1:27017/${process.env.DB_DATA_BASE}`, {useNewUrlParser: true, useUnifiedTopology: true})
+mongoose.connect(`mongodb://127.0.0.1:27017/${process.env.DB_DATA_BASE}`,
+    {
+        useNewUrlParser: true, 
+        useUnifiedTopology: true,
+        useCreateIndex: true
+    })
 
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'Console Error:'))
