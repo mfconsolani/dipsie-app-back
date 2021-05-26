@@ -14,7 +14,9 @@ const candidateSchema = new Schema({
     candidateInfo: {
         type: [interviewSchema],
         required: true
-    }
+    },
+    availableNow: Boolean,
+    mainSkills: String
 }) 
 
 export const Candidate = mongoose.model<CandidateInterface>('Candidato', candidateSchema);

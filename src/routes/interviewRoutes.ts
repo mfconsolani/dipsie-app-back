@@ -10,7 +10,7 @@ interviewRouter.get('/', (req: Request, res: Response) => {
 });
 
 interviewRouter.post('/', async (req: Request, res: Response) => {
-    const { candidate, id, info} = req.body
+    const { candidate, id, info, availableNow, mainSkills} = req.body
     const alreadyInDb = await Candidate.find({candidateId: parseInt(id)})
     if (alreadyInDb[0]){
         const updateInfo = await Candidate.updateOne({candidateId: parseInt(id)}, 
@@ -20,7 +20,9 @@ interviewRouter.post('/', async (req: Request, res: Response) => {
         const candidateLoaded = new Candidate({
             candidateName: candidate,
             candidateId: id,
-            candidateInfo: info
+            candidateInfo: info,
+            availableNow: availableNow,
+            mainSkills: mainSkills
         })
         candidateLoaded.save( (err:any, candidate:CandidateInterface) => {
             if (err){

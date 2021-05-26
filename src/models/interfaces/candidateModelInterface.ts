@@ -5,4 +5,6 @@ export interface CandidateInterface extends Document {
     candidateName: string;
     candidateId: number;
     candidateInfo: [InterviewInterface];
+    availableNow: boolean,
+    mainSkills: string
   }
