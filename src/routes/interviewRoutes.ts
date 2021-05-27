@@ -14,7 +14,9 @@ interviewRouter.post('/', async (req: Request, res: Response) => {
     const alreadyInDb = await Candidate.find({candidateId: parseInt(id)})
     if (alreadyInDb[0]){
         const updateInfo = await Candidate.updateOne({candidateId: parseInt(id)}, 
-        {$push: {candidateInfo: info}})
+        {$set: {availableNow: availableNow, mainSkills: mainSkills}, $push: {candidateInfo: info} })
+        console.log(alreadyInDb[0])
+        // alreadyInDb.
         res.status(200).json({'Status': `Candidate info updated ${JSON.stringify(info)}`})
     } else {
         const candidateLoaded = new Candidate({
