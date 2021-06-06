@@ -4,7 +4,7 @@ import { InterviewInterface } from './interviewModelInterface'
 export interface CandidateInterface extends Document {
     candidateName: string;
     candidateId: number;
-    candidateInfo: [InterviewInterface];
+    // candidateInfo: [InterviewInterface];
     availableNow: boolean,
     mainSkills: string
   }

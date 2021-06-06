@@ -11,10 +11,10 @@ const candidateSchema = new Schema({
         type: Number,
         unique: true
     },
-    candidateInfo: {
-        type: [interviewSchema],
-        required: true
-    },
+    // candidateInfo: {
+    //     type: [interviewSchema],
+    //     required: false
+    // },
     availableNow: Boolean,
     mainSkills: String
 }) 
