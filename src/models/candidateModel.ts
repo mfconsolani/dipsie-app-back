@@ -11,13 +11,15 @@ const candidateSchema = new Schema({
         type: Number,
         unique: true
     },
-    // candidateInfo: {
-    //     type: [interviewSchema],
-    //     required: false
-    // },
+    candidateInfo: {
+        type: [interviewSchema],
+        required: false
+    },
     availableNow: Boolean,
     mainSkills: String
 }) 
+
+
 
 export const Candidate = mongoose.model<CandidateInterface>('Candidato', candidateSchema);
 
