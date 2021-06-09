@@ -41,8 +41,10 @@ interviewRouter.get('/inputFields', async (req: Request, res: Response) => {
     const mauro = await Candidate.schema.eachPath(function(path) {
         console.log(path);
     });
-    console.log(mauro)
-    res.status(200).json({'fields':mauro})
+    console.log(Object.keys(mauro.obj), Object.keys(mauro.obj.candidateInfo.type[0].paths) )
+    // const mauro = Object.keys(await Candidate.schema.path)
+    // console.log(mauro)
+    res.status(200).json({'fields':mauro.obj})
 
 })
 
