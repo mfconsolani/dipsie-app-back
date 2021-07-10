@@ -5,7 +5,7 @@ export const interviewSchema = new Schema({
     currentSituation: String,
     motivationToChange: String,
     freelanceOrPerm: String,
-    inermediaries: String,
+    intermediaries: String,
     yearsInSap: String,
     coreModule: String,
     fullCycleImp: String,

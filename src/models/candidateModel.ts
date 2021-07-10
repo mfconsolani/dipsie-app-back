@@ -20,6 +20,5 @@ const candidateSchema = new Schema({
 }) 
 
 
-
 export const Candidate = mongoose.model<CandidateInterface>('Candidato', candidateSchema);
 

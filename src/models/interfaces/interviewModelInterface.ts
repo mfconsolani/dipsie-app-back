@@ -5,7 +5,7 @@ export interface InterviewInterface extends Document {
     currentSituation: string,
     motivationToChange: string,
     freelanceOrPerm: string,
-    inermediaries: string,
+    intermediaries: string,
     yearsInSap: string,
     coreModule: string,
     fullCycleImp: string,
