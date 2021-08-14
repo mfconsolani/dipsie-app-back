@@ -17,8 +17,8 @@ app.use('/interview', interviewRouter)
 
 // Database Config
 
-// mongoose.connect(`mongodb://127.0.0.1:27017/${process.env.DB_DATA_BASE}`,
-mongoose.connect("mongodb://mongo:27017/pixie",
+mongoose.connect(`mongodb://127.0.0.1:27017/${process.env.DB_DATA_BASE}`,
+// mongoose.connect("mongodb://mongo:27017/pixie",
 
     {
         useNewUrlParser: true, 
@@ -32,12 +32,10 @@ db.once('open', () => console.log(`App connected to "${db.name}" database`))
 
 
 // Server Config
+const PORT = 8080
 
-const server = app.listen(7500, () => {
-    console.log("App running on port 8080")
-    setTimeout(() => {
-     }, 2000 ) 
-
+const server = app.listen(PORT, () => {
+    console.log(`App running on port ${PORT}`)
 })
 
 server.on("error", (err: Error) => {
