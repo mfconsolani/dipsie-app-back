@@ -9,7 +9,12 @@ export const interviewRouter = Router();
 interviewRouter.use(checkJwt);
 
 interviewRouter.get("/", (req: Request, res: Response) => {
-  res.send("Interview screen");
+    res.send("interview endpoint");
+});
+
+interviewRouter.post("/post", (req: Request, res: Response) => {
+    console.log(req.body)
+    res.send("accomplished");
 });
 
 interviewRouter.post("/", async (req: Request, res: Response) => {
@@ -80,3 +85,4 @@ interviewRouter.get(
       : res.status(404).json({ Candidato: "Candidato no encontrado" });
   }
 );
+
