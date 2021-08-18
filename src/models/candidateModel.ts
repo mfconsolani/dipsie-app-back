@@ -2,7 +2,7 @@ import mongoose, { Schema }  from "mongoose";
 import { CandidateInterface  } from "./interfaces/candidateModelInterface";
 import { interviewSchema } from './interviewModel';
 
-const candidateSchema = new Schema({
+export const candidateSchema = new Schema({
     candidateName: {
         type: String,
         required: true
