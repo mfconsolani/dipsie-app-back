@@ -1,5 +1,8 @@
 import mongoose, { Schema } from 'mongoose';
+import { removeListener } from 'process';
 import { candidateSchema } from './candidateModel';
+
+//console.log(p.id); // '50341373e894ad16347efe01'
 
 const userSchema = new Schema({
     username: String,
@@ -10,3 +13,5 @@ const userSchema = new Schema({
 })
 
 export const User = mongoose.model('User', userSchema)
+
+
