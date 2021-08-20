@@ -4,6 +4,7 @@ import { CandidateInterface } from "../models/interfaces/candidateModelInterface
 import { checkJwt } from "../middleware/authz.middleware";
 import { checkPermissions } from "../middleware/permissions.middleware";
 import { CandidatePermission } from "../candidates/candidate-permission";
+import { User } from '../models/userModel';
 
 export const interviewRouter = Router();
 interviewRouter.use(checkJwt);
@@ -17,9 +18,22 @@ interviewRouter.post("/post", (req: Request, res: Response) => {
   res.send("accomplished");
 });
 
+interviewRouter.post('/user', async (req: Request, res: Response) => {
+  let {username, email, pictureUrl, role, candidates} = req.body
+  const newUser = new User({
+    username,
+    email,
+    pictureUrl,
+    role,
+    candidates
+  }).save()
+  const alreadyInDb = await User.find({ username: username });
+  res.json({user: alreadyInDb})
+})
+
 interviewRouter.post(
   "/",
-  checkPermissions(CandidatePermission.CreateCandidate),
+  // checkPermissions(CandidatePermission.CreateCandidate),
   async (req: Request, res: Response) => {
     let { candidate, id, info, availableNow, mainSkills } = req.body;
     id = parseInt(id);
@@ -74,7 +88,7 @@ interviewRouter.get("/inputFields", async (req: Request, res: Response) => {
 
 interviewRouter.get(
   "/:idCandidato",
-  checkPermissions(CandidatePermission.ReadCandidate),
+  // checkPermissions(CandidatePermission.ReadCandidate),
   async (req: Request, res: Response) => {
     const { idCandidato } = req.params;
     const infoCandidato = await Candidate.find({

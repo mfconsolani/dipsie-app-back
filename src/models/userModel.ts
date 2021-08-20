@@ -1,5 +1,4 @@
 import mongoose, { Schema } from 'mongoose';
-import { removeListener } from 'process';
 import { candidateSchema } from './candidateModel';
 
 //console.log(p.id); // '50341373e894ad16347efe01'
