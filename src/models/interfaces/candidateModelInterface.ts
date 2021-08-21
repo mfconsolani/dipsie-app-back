@@ -1,7 +1,6 @@
-import { Document }  from "mongoose";
 import { InterviewInterface } from './interviewModelInterface'
 
-export interface CandidateInterface extends Document {
+export interface CandidateInterface {
     candidateName: string;
     candidateId: number;
     candidateInfo: [InterviewInterface];

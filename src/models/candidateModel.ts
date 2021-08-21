@@ -2,14 +2,16 @@ import mongoose, { Schema }  from "mongoose";
 import { CandidateInterface  } from "./interfaces/candidateModelInterface";
 import { interviewSchema } from './interviewModel';
 
-export const candidateSchema = new Schema({
+export const candidateSchema = new Schema<CandidateInterface>({
     candidateName: {
         type: String,
         required: true
     },
     candidateId: {
         type: Number,
-        unique: true
+        required: true,
+        unique: true,
+        sparse: true
     },
     candidateInfo: {
         type: [interviewSchema],

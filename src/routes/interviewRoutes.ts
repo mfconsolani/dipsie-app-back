@@ -4,7 +4,7 @@ import { CandidateInterface } from "../models/interfaces/candidateModelInterface
 import { checkJwt } from "../middleware/authz.middleware";
 import { checkPermissions } from "../middleware/permissions.middleware";
 import { CandidatePermission } from "../candidates/candidate-permission";
-import { User } from '../models/userModel';
+import { User } from "../models/userModel";
 
 export const interviewRouter = Router();
 interviewRouter.use(checkJwt);
@@ -18,58 +18,90 @@ interviewRouter.post("/post", (req: Request, res: Response) => {
   res.send("accomplished");
 });
 
-interviewRouter.post('/user', async (req: Request, res: Response) => {
-  let {username, email, pictureUrl, role, candidates} = req.body
+interviewRouter.post("/user", async (req: Request, res: Response) => {
+  //falta todo el try catch
+  let { username, email, pictureUrl, role, candidates } = req.body;
   const newUser = new User({
     username,
     email,
     pictureUrl,
     role,
-    candidates
-  }).save()
+    candidates: candidates
+      ? {
+          candidateName: candidates.candidate,
+          candidateId: candidates.id,
+          candidateInfo: candidates.info,
+          availableNow: candidates.availableNow,
+          mainSkills: candidates.mainSkills,
+        }
+      : [],
+  }).save();
   const alreadyInDb = await User.find({ username: username });
-  res.json({user: alreadyInDb})
-})
+  res.json({ user: alreadyInDb });
+});
 
 interviewRouter.post(
   "/",
   // checkPermissions(CandidatePermission.CreateCandidate),
   async (req: Request, res: Response) => {
-    let { candidate, id, info, availableNow, mainSkills } = req.body;
+    let { candidate, id, info, availableNow, mainSkills, idUser } = req.body;
     id = parseInt(id);
-    const alreadyInDb = await Candidate.find({ candidateId: id });
-    if (alreadyInDb[0]) {
-      const updateInfo = await Candidate.updateOne(
-        { candidateId: id },
-        {
-          $set: { availableNow: availableNow, mainSkills: mainSkills },
-          $push: { candidateInfo: info },
-        }
-      );
-      console.log("User info updated");
-      res.status(200).json(info);
-    } else if (id > 0) {
-      const candidateLoaded = new Candidate({
-        candidateName: candidate,
-        candidateId: id,
-        candidateInfo: info,
-        availableNow: availableNow,
-        mainSkills: mainSkills,
-      });
-      candidateLoaded.save((err: any, candidate: CandidateInterface) => {
-        if (err) {
-          console.log(err.message);
-          return res.status(404).json({ Error: err.message });
-        } else {
-          console.log("User created properly");
-          return res.status(201).json({
-            Status: `Candidato creado: ${candidate.candidateName} ${candidate.candidateId}`,
-          });
-        }
-      });
-    }
+    console.log(candidate)
+    const alreadyInDb = await User.find({
+      _id: "61211c8b3a72d18b9684cc81",
+      "candidates.candidateId": id,
+    }).lean();
+
+    const updateCandidateInfo = await User.updateOne(
+      {
+        _id: "61211c8b3a72d18b9684cc81",
+        "candidates.candidateId": id,
+      },
+      {
+        $set: {
+          "candidates.$.availableNow": availableNow,
+          "candidates.$.mainSkills": mainSkills,
+        },
+        $push: { "candidates.$.candidateInfo": info },
+      }
+    );
+
+    console.log('Info updated', candidate, id)
+    res.status(200).json({"Candidate update succedded": {candidate, id, info}});
+    // const alreadyInDb = await Candidate.find({ candidateId: id });
+    // if (alreadyInDb[0]) {
+    //   const updateInfo = await Candidate.updateOne(
+    //     { candidateId: id },
+    //     {
+    //       $set: { availableNow: availableNow, mainSkills: mainSkills },
+    //       $push: { candidateInfo: info },
+    //     }
+    //   );
+    //   console.log("User info updated");
+    //   res.status(200).json(info);
+    // } else if (id > 0) {
+    //   const candidateLoaded = new Candidate({
+    //     candidateName: candidate,
+    //     candidateId: id,
+    //     candidateInfo: info,
+    //     availableNow: availableNow,
+    //     mainSkills: mainSkills,
+    //   });
+    //   candidateLoaded.save((err: any, candidate: CandidateInterface) => {
+    //     if (err) {
+    //       console.log(err.message);
+    //       return res.status(404).json({ Error: err.message });
+    //     } else {
+    //       console.log("User created properly");
+    //       return res.status(201).json({
+    //         Status: `Candidato creado: ${candidate.candidateName} ${candidate.candidateId}`,
+    //       });
+    //     }
+    //   });
+    // }
   }
 );
+
 interviewRouter.get("/inputFields", async (req: Request, res: Response) => {
   const schemaAttributes = await Candidate.schema.eachPath(function (
     path: any

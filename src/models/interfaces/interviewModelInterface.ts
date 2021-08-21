@@ -1,7 +1,5 @@
-import { Document }  from "mongoose";
 
-
-export interface InterviewInterface extends Document {
+export interface InterviewInterface {
     currentSituation: string,
     motivationToChange: string,
     freelanceOrPerm: string,
