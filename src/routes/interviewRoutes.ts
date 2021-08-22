@@ -5,9 +5,10 @@ import { checkJwt } from "../middleware/authz.middleware";
 import { checkPermissions } from "../middleware/permissions.middleware";
 import { CandidatePermission } from "../candidates/candidate-permission";
 import { User } from "../models/userModel";
+import { Error } from "mongoose";
 
 export const interviewRouter = Router();
-interviewRouter.use(checkJwt);
+// interviewRouter.use(checkJwt);
 
 interviewRouter.get("/", (req: Request, res: Response) => {
   res.send("interview endpoint");
@@ -21,23 +22,30 @@ interviewRouter.post("/post", (req: Request, res: Response) => {
 interviewRouter.post("/user", async (req: Request, res: Response) => {
   //falta todo el try catch
   let { username, email, pictureUrl, role, candidates } = req.body;
-  const newUser = new User({
-    username,
-    email,
-    pictureUrl,
-    role,
-    candidates: candidates
-      ? {
-          candidateName: candidates.candidate,
-          candidateId: candidates.id,
-          candidateInfo: candidates.info,
-          availableNow: candidates.availableNow,
-          mainSkills: candidates.mainSkills,
-        }
-      : [],
-  }).save();
-  const alreadyInDb = await User.find({ username: username });
-  res.json({ user: alreadyInDb });
+
+  try {
+    const newUser = await new User({
+      username,
+      email,
+      pictureUrl,
+      role,
+      candidates: candidates
+        ? {
+            candidateName: candidates.candidate,
+            candidateId: candidates.id,
+            candidateInfo: candidates.info,
+            availableNow: candidates.availableNow,
+            mainSkills: candidates.mainSkills,
+          }
+        : [],
+    }).save();
+    const alreadyInDb = await User.find({ email: email }).lean();
+    console.log(alreadyInDb);
+    res.json({ user: alreadyInDb });
+  } catch (err: any) {
+    console.log(err.errmsg);
+    res.status(400).send(err.errmsg);
+  }
 });
 
 interviewRouter.post(
@@ -46,28 +54,69 @@ interviewRouter.post(
   async (req: Request, res: Response) => {
     let { candidate, id, info, availableNow, mainSkills, idUser } = req.body;
     id = parseInt(id);
-    console.log(candidate)
-    const alreadyInDb = await User.find({
-      _id: "61211c8b3a72d18b9684cc81",
+    // console.log(candidate)
+    // falta chequear que el usuario existe
+    const candidateInDb = await User.find({
+      _id: idUser,
       "candidates.candidateId": id,
     }).lean();
+    console.log(candidateInDb);
 
-    const updateCandidateInfo = await User.updateOne(
-      {
-        _id: "61211c8b3a72d18b9684cc81",
-        "candidates.candidateId": id,
-      },
-      {
-        $set: {
-          "candidates.$.availableNow": availableNow,
-          "candidates.$.mainSkills": mainSkills,
+    if (candidateInDb[0]) {
+      const updateCandidateInfo = await User.updateOne(
+        {
+          _id: "61211c8b3a72d18b9684cc81",
+          "candidates.candidateId": id,
         },
-        $push: { "candidates.$.candidateInfo": info },
-      }
-    );
+        {
+          $set: {
+            "candidates.$.availableNow": availableNow,
+            "candidates.$.mainSkills": mainSkills,
+          },
+          $push: { "candidates.$.candidateInfo": info },
+        }
+      );
 
-    console.log('Info updated', candidate, id)
-    res.status(200).json({"Candidate update succedded": {candidate, id, info}});
+      console.log("Info updated", candidate, id);
+      res
+        .status(200)
+        .json({ "Candidate update succedded": { candidate, id, info } });
+    } else if (id > 0) {
+      console.log("inside else if");
+      const candidateLoaded = new Candidate({
+        candidateName: candidate,
+        candidateId: id,
+        candidateInfo: info,
+        availableNow: availableNow,
+        mainSkills: mainSkills,
+      });
+      console.log(candidateLoaded);
+
+      try {
+        // evaluar si es mejor usar upsert
+        const updateCandidateInfo = await User.updateOne(
+          {
+            _id: idUser,
+          },
+          {
+            $push: { candidates: candidateLoaded },
+          }
+        );
+
+        console.log("Candidato agregado", updateCandidateInfo);
+        updateCandidateInfo.n
+          ? res
+              .status(200)
+              .json({ "Candidate created": { candidate, id, info } })
+          : res
+              .status(400)
+              .json({ Error: "No se ha creado ni modificado información" });
+      } catch (err) {
+        console.log(err);
+        res.status(400).send(err);
+      }
+    }
+
     // const alreadyInDb = await Candidate.find({ candidateId: id });
     // if (alreadyInDb[0]) {
     //   const updateInfo = await Candidate.updateOne(

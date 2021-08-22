@@ -10,7 +10,7 @@ export const candidateSchema = new Schema<CandidateInterface>({
     candidateId: {
         type: Number,
         required: true,
-        unique: true,
+        // unique: true,
         sparse: true
     },
     candidateInfo: {
