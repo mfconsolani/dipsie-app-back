@@ -1,13 +1,12 @@
 import { Router, Request, Response } from "express";
 import { Candidate } from "../models/candidateModel";
-import { CandidateInterface } from "../models/interfaces/candidateModelInterface";
 import { checkJwt } from "../middleware/authz.middleware";
 import { checkPermissions } from "../middleware/permissions.middleware";
 import { CandidatePermission } from "../candidates/candidate-permission";
 import { User } from "../models/userModel";
-import dotenv from 'dotenv'
+import dotenv from "dotenv";
 
-dotenv.config()
+dotenv.config();
 
 export const interviewRouter = Router();
 interviewRouter.use(checkJwt);
@@ -16,13 +15,7 @@ interviewRouter.get("/", (req: Request, res: Response) => {
   res.send("interview endpoint");
 });
 
-interviewRouter.post("/post", (req: Request, res: Response) => {
-  console.log(req.body);
-  res.send("accomplished");
-});
-
 interviewRouter.post("/user", async (req: Request, res: Response) => {
-  //falta todo el try catch
   let { username, email, pictureUrl, role, candidates } = req.body;
 
   try {
@@ -52,22 +45,18 @@ interviewRouter.post("/user", async (req: Request, res: Response) => {
 
 interviewRouter.post(
   "/",
-  // checkPermissions(CandidatePermission.CreateCandidate),
+  checkPermissions(CandidatePermission.CreateCandidate),
   async (req: Request, res: Response) => {
-    let { candidate, id, info, availableNow, mainSkills, userEmail } = req.body;
+    // @ts-ignore
+    const userEmail = req.user[`${process.env.AUTH0_AUDIENCE}/email`];
+    console.log(userEmail)
+    let { candidate, id, info, availableNow, mainSkills } = req.body;
     id = parseInt(id);
-    // console.log(candidate)
-    // falta chequear que el usuario existe
     const candidateInDb = await User.find({
       email: userEmail,
       "candidates.candidateId": id,
-    }).lean();
-    console.log(
-      candidateInDb,
-      candidateInDb.length,
-      candidateInDb[0].candidates
-    );
-
+    });
+    // console.log(candidateInDb)
     if (candidateInDb.length > 0) {
       const updateCandidateInfo = await User.updateOne(
         {
@@ -87,8 +76,8 @@ interviewRouter.post(
       res
         .status(200)
         .json({ "Candidate update succedded": { candidate, id, info } });
-    } else if (id > 0) {
-      console.log("inside else if");
+    } else {
+      // console.log("inside else if");
       const candidateLoaded = new Candidate({
         candidateName: candidate,
         candidateId: id,
@@ -96,7 +85,7 @@ interviewRouter.post(
         availableNow: availableNow,
         mainSkills: mainSkills,
       });
-      console.log(candidateLoaded);
+      // console.log(candidateLoaded);
 
       try {
         // evaluar si es mejor usar upsert
@@ -110,7 +99,7 @@ interviewRouter.post(
         );
 
         console.log("Candidato agregado", updateCandidateInfo);
-        updateCandidateInfo.n
+        updateCandidateInfo
           ? res.status(200).json({ "Candidate created": { candidate, id } })
           : res
               .status(400)
@@ -172,29 +161,29 @@ interviewRouter.get("/inputFields", async (req: Request, res: Response) => {
 });
 
 interviewRouter.get(
-  "/:idCandidato&:userEmail",
+  "/:idCandidato",
   checkPermissions(CandidatePermission.ReadCandidate),
   async (req: Request, res: Response) => {
     // @ts-ignore
-    const userEmail = req.user[`${process.env.AUTH0_AUDIENCE}/email`]
+    const userEmail = req.user[`${process.env.AUTH0_AUDIENCE}/email`];
     const { idCandidato } = req.params;
     const infoCandidato = await User.aggregate([
       {
-        "$match": {
-          email: userEmail
-        }
+        $match: {
+          email: userEmail,
+        },
       },
       {
-        "$unwind": "$candidates"
+        $unwind: "$candidates",
       },
       {
-        "$match": {
-          "candidates.candidateId": parseInt(idCandidato)
-        }
-      }]);
+        $match: {
+          "candidates.candidateId": parseInt(idCandidato),
+        },
+      },
+    ]);
 
-      infoCandidato.length !== 0
-    infoCandidato
+    infoCandidato.length !== 0
       ? res.status(200).json({ Candidato: infoCandidato })
       : res.status(404).json({ Candidato: "Candidato no encontrado" });
   }

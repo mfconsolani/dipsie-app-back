@@ -26,8 +26,7 @@ mongoose.connect(`mongodb://127.0.0.1:27017/${process.env.DB_DATA_BASE}`,
         useCreateIndex: true
     })
 
-    mongoose.set('useFindAndModify', false);
-
+mongoose.set('useFindAndModify', false);
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'Console Error:'))
 db.once('open', () => console.log(`App connected to "${db.name}" database`))
