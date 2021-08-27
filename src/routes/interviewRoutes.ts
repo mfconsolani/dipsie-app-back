@@ -5,10 +5,12 @@ import { checkJwt } from "../middleware/authz.middleware";
 import { checkPermissions } from "../middleware/permissions.middleware";
 import { CandidatePermission } from "../candidates/candidate-permission";
 import { User } from "../models/userModel";
-import { Error } from "mongoose";
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 export const interviewRouter = Router();
-// interviewRouter.use(checkJwt);
+interviewRouter.use(checkJwt);
 
 interviewRouter.get("/", (req: Request, res: Response) => {
   res.send("interview endpoint");
@@ -52,20 +54,24 @@ interviewRouter.post(
   "/",
   // checkPermissions(CandidatePermission.CreateCandidate),
   async (req: Request, res: Response) => {
-    let { candidate, id, info, availableNow, mainSkills, idUser } = req.body;
+    let { candidate, id, info, availableNow, mainSkills, userEmail } = req.body;
     id = parseInt(id);
     // console.log(candidate)
     // falta chequear que el usuario existe
     const candidateInDb = await User.find({
-      _id: idUser,
+      email: userEmail,
       "candidates.candidateId": id,
     }).lean();
-    console.log(candidateInDb);
+    console.log(
+      candidateInDb,
+      candidateInDb.length,
+      candidateInDb[0].candidates
+    );
 
-    if (candidateInDb[0]) {
+    if (candidateInDb.length > 0) {
       const updateCandidateInfo = await User.updateOne(
         {
-          _id: "61211c8b3a72d18b9684cc81",
+          email: userEmail,
           "candidates.candidateId": id,
         },
         {
@@ -96,7 +102,7 @@ interviewRouter.post(
         // evaluar si es mejor usar upsert
         const updateCandidateInfo = await User.updateOne(
           {
-            _id: idUser,
+            email: userEmail,
           },
           {
             $push: { candidates: candidateLoaded },
@@ -105,9 +111,7 @@ interviewRouter.post(
 
         console.log("Candidato agregado", updateCandidateInfo);
         updateCandidateInfo.n
-          ? res
-              .status(200)
-              .json({ "Candidate created": { candidate, id, info } })
+          ? res.status(200).json({ "Candidate created": { candidate, id } })
           : res
               .status(400)
               .json({ Error: "No se ha creado ni modificado información" });
@@ -168,17 +172,29 @@ interviewRouter.get("/inputFields", async (req: Request, res: Response) => {
 });
 
 interviewRouter.get(
-  "/:idCandidato",
-  // checkPermissions(CandidatePermission.ReadCandidate),
+  "/:idCandidato&:userEmail",
+  checkPermissions(CandidatePermission.ReadCandidate),
   async (req: Request, res: Response) => {
+    // @ts-ignore
+    const userEmail = req.user[`${process.env.AUTH0_AUDIENCE}/email`]
     const { idCandidato } = req.params;
-    const infoCandidato = await Candidate.find({
-      candidateId: parseInt(idCandidato),
-    });
-    // let nestedInfo = infoCandidato[0].candidateInfo.postSavingDate
-    // console.log(moment(nestedInfo).format("DD-MM-YYYY"))
-    // console.log(infoCandidato, Boolean(infoCandidato), infoCandidato.length)
-    infoCandidato.length !== 0
+    const infoCandidato = await User.aggregate([
+      {
+        "$match": {
+          email: userEmail
+        }
+      },
+      {
+        "$unwind": "$candidates"
+      },
+      {
+        "$match": {
+          "candidates.candidateId": parseInt(idCandidato)
+        }
+      }]);
+
+      infoCandidato.length !== 0
+    infoCandidato
       ? res.status(200).json({ Candidato: infoCandidato })
       : res.status(404).json({ Candidato: "Candidato no encontrado" });
   }
