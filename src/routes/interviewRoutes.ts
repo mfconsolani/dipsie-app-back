@@ -15,33 +15,44 @@ interviewRouter.get("/", (req: Request, res: Response) => {
   res.send("interview endpoint");
 });
 
-interviewRouter.post("/user", async (req: Request, res: Response) => {
-  let { username, email, pictureUrl, role, candidates } = req.body;
+interviewRouter.post(
+  "/user",
+  // checkPermissions(CandidatePermission.CreateUser),
+  async (req: Request, res: Response) => {
+    let { username, email, role, candidates } = req.body;
 
-  try {
-    const newUser = await new User({
-      username,
-      email,
-      pictureUrl,
-      role,
-      candidates: candidates
-        ? {
-            candidateName: candidates.candidate,
-            candidateId: candidates.id,
-            candidateInfo: candidates.info,
-            availableNow: candidates.availableNow,
-            mainSkills: candidates.mainSkills,
-          }
-        : [],
-    }).save();
     const alreadyInDb = await User.find({ email: email }).lean();
-    console.log(alreadyInDb);
-    res.json({ user: alreadyInDb });
-  } catch (err: any) {
-    console.log(err.errmsg);
-    res.status(400).send(err.errmsg);
+
+    if (alreadyInDb.length > 0) {
+      console.log("Usuario existente", alreadyInDb);
+      return res.json({ "Usuario Existente": alreadyInDb });
+    }
+    try {
+      // console.log("inside try")
+      const newUser = await new User({
+        username,
+        email,
+        role,
+        candidates: candidates
+          ? {
+              candidateName: candidates.candidate,
+              candidateId: candidates.id,
+              candidateInfo: candidates.info,
+              availableNow: candidates.availableNow,
+              mainSkills: candidates.mainSkills,
+            }
+          : [],
+      }).save();
+      console.log("Nuevo usuario creado", newUser);
+      res.json({ "Usuario creado": newUser });
+    } catch (err: any) {
+      // console.log("inside catch")
+      // console.log(err.errmsg);
+      console.log("Error", err);
+      res.status(400).send(err);
+    }
   }
-});
+);
 
 interviewRouter.post(
   "/",
@@ -49,7 +60,7 @@ interviewRouter.post(
   async (req: Request, res: Response) => {
     // @ts-ignore
     const userEmail = req.user[`${process.env.AUTH0_AUDIENCE}/email`];
-    console.log(userEmail)
+    console.log(userEmail);
     let { candidate, id, info, availableNow, mainSkills } = req.body;
     id = parseInt(id);
     const candidateInDb = await User.find({
@@ -77,7 +88,6 @@ interviewRouter.post(
         .status(200)
         .json({ "Candidate update succedded": { candidate, id, info } });
     } else {
-      // console.log("inside else if");
       const candidateLoaded = new Candidate({
         candidateName: candidate,
         candidateId: id,
@@ -85,7 +95,6 @@ interviewRouter.post(
         availableNow: availableNow,
         mainSkills: mainSkills,
       });
-      // console.log(candidateLoaded);
 
       try {
         // evaluar si es mejor usar upsert
@@ -109,38 +118,6 @@ interviewRouter.post(
         res.status(400).send(err);
       }
     }
-
-    // const alreadyInDb = await Candidate.find({ candidateId: id });
-    // if (alreadyInDb[0]) {
-    //   const updateInfo = await Candidate.updateOne(
-    //     { candidateId: id },
-    //     {
-    //       $set: { availableNow: availableNow, mainSkills: mainSkills },
-    //       $push: { candidateInfo: info },
-    //     }
-    //   );
-    //   console.log("User info updated");
-    //   res.status(200).json(info);
-    // } else if (id > 0) {
-    //   const candidateLoaded = new Candidate({
-    //     candidateName: candidate,
-    //     candidateId: id,
-    //     candidateInfo: info,
-    //     availableNow: availableNow,
-    //     mainSkills: mainSkills,
-    //   });
-    //   candidateLoaded.save((err: any, candidate: CandidateInterface) => {
-    //     if (err) {
-    //       console.log(err.message);
-    //       return res.status(404).json({ Error: err.message });
-    //     } else {
-    //       console.log("User created properly");
-    //       return res.status(201).json({
-    //         Status: `Candidato creado: ${candidate.candidateName} ${candidate.candidateId}`,
-    //       });
-    //     }
-    //   });
-    // }
   }
 );
 

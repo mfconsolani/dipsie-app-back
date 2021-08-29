@@ -9,7 +9,7 @@ const userSchema = new Schema<UserInterface>({
         unique: true 
     },
     pictureUrl: String,
-    role: String,
+    role: [String],
     candidates:{
         type: [candidateSchema],
         sparse: true
