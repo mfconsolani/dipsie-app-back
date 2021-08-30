@@ -6,53 +6,14 @@ import { CandidatePermission } from "../candidates/candidate-permission";
 import { User } from "../models/userModel";
 import dotenv from "dotenv";
 
-dotenv.config();
 
 export const interviewRouter = Router();
+dotenv.config();
 interviewRouter.use(checkJwt);
 
 interviewRouter.get("/", (req: Request, res: Response) => {
   res.send("interview endpoint");
 });
-
-interviewRouter.post(
-  "/user",
-  // checkPermissions(CandidatePermission.CreateUser),
-  async (req: Request, res: Response) => {
-    let { username, email, role, candidates } = req.body;
-
-    const alreadyInDb = await User.find({ email: email }).lean();
-
-    if (alreadyInDb.length > 0) {
-      console.log("Usuario existente", alreadyInDb);
-      return res.json({ "Usuario Existente": alreadyInDb });
-    }
-    try {
-      // console.log("inside try")
-      const newUser = await new User({
-        username,
-        email,
-        role,
-        candidates: candidates
-          ? {
-              candidateName: candidates.candidate,
-              candidateId: candidates.id,
-              candidateInfo: candidates.info,
-              availableNow: candidates.availableNow,
-              mainSkills: candidates.mainSkills,
-            }
-          : [],
-      }).save();
-      console.log("Nuevo usuario creado", newUser);
-      res.json({ "Usuario creado": newUser });
-    } catch (err: any) {
-      // console.log("inside catch")
-      // console.log(err.errmsg);
-      console.log("Error", err);
-      res.status(400).send(err);
-    }
-  }
-);
 
 interviewRouter.post(
   "/",

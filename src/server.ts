@@ -1,5 +1,6 @@
 import express from "express"
 import { interviewRouter } from './routes/interviewRoutes';
+import { userRouter } from './routes/userRoutes'
 import mongoose from 'mongoose';
 import dotenv from 'dotenv'
 import cors from 'cors'
@@ -14,6 +15,7 @@ dotenv.config()
 app.use(express.json())
 app.use(cors())
 app.use('/interview', interviewRouter)
+app.use('/user', userRouter)
 
 // Database Config
 
