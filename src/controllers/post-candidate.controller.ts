@@ -23,7 +23,7 @@ export const postCandidate = async (req: Request, res: Response) => {
     }
   } else {
     try {
-      const candidateCreated = createNewCandidate(req.body);
+      const candidateCreated = await createNewCandidate(req.body);
       // evaluar si es mejor usar upsert
       const candidateSavedToDb = await pushCandidateIntoUser(userEmail,candidateCreated);
       res.status(200).json({ "Candidate created": { candidate, id } });
