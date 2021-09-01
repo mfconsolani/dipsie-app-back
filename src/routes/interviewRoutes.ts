@@ -5,7 +5,7 @@ import { checkPermissions } from "../middleware/permissions.middleware";
 import { CandidatePermission } from "../candidates/candidate-permission";
 import { User } from "../models/userModel";
 import dotenv from "dotenv";
-
+import {postCandidate} from '../controllers/post-candidate.controller'
 
 export const interviewRouter = Router();
 dotenv.config();
@@ -17,70 +17,70 @@ interviewRouter.get("/", (req: Request, res: Response) => {
 
 interviewRouter.post(
   "/",
-  checkPermissions(CandidatePermission.CreateCandidate),
-  async (req: Request, res: Response) => {
-    // @ts-ignore
-    const userEmail = req.user[`${process.env.AUTH0_AUDIENCE}/email`];
-    console.log(userEmail);
-    let { candidate, id, info, availableNow, mainSkills } = req.body;
-    id = parseInt(id);
-    const candidateInDb = await User.find({
-      email: userEmail,
-      "candidates.candidateId": id,
-    });
-    // console.log(candidateInDb)
-    if (candidateInDb.length > 0) {
-      const updateCandidateInfo = await User.updateOne(
-        {
-          email: userEmail,
-          "candidates.candidateId": id,
-        },
-        {
-          $set: {
-            "candidates.$.availableNow": availableNow,
-            "candidates.$.mainSkills": mainSkills,
-          },
-          $push: { "candidates.$.candidateInfo": info },
-        }
-      );
+  checkPermissions(CandidatePermission.CreateCandidate), postCandidate)
+//   async (req: Request, res: Response) => {
+//     // @ts-ignore
+//     const userEmail = req.user[`${process.env.AUTH0_AUDIENCE}/email`];
+//     console.log(userEmail);
+//     let { candidate, id, info, availableNow, mainSkills } = req.body;
+//     id = parseInt(id);
+//     const candidateInDb = await User.find({
+//       email: userEmail,
+//       "candidates.candidateId": id,
+//     });
+//     // console.log(candidateInDb)
+//     if (candidateInDb.length > 0) {
+//       const updateCandidateInfo = await User.updateOne(
+//         {
+//           email: userEmail,
+//           "candidates.candidateId": id,
+//         },
+//         {
+//           $set: {
+//             "candidates.$.availableNow": availableNow,
+//             "candidates.$.mainSkills": mainSkills,
+//           },
+//           $push: { "candidates.$.candidateInfo": info },
+//         }
+//       );
 
-      console.log("Info updated", candidate, id);
-      res
-        .status(200)
-        .json({ "Candidate update succedded": { candidate, id, info } });
-    } else {
-      const candidateLoaded = new Candidate({
-        candidateName: candidate,
-        candidateId: id,
-        candidateInfo: info,
-        availableNow: availableNow,
-        mainSkills: mainSkills,
-      });
+//       console.log("Info updated", candidate, id);
+//       res
+//         .status(200)
+//         .json({ "Candidate update succedded": { candidate, id, info } });
+//     } else {
+//       const candidateLoaded = new Candidate({
+//         candidateName: candidate,
+//         candidateId: id,
+//         candidateInfo: info,
+//         availableNow: availableNow,
+//         mainSkills: mainSkills,
+//       });
 
-      try {
-        // evaluar si es mejor usar upsert
-        const updateCandidateInfo = await User.updateOne(
-          {
-            email: userEmail,
-          },
-          {
-            $push: { candidates: candidateLoaded },
-          }
-        );
+//       try {
+//         // evaluar si es mejor usar upsert
+//         const updateCandidateInfo = await User.updateOne(
+//           {
+//             email: userEmail,
+//           },
+//           {
+//             $push: { candidates: candidateLoaded },
+//           }
+//         );
 
-        console.log("Candidato agregado", updateCandidateInfo);
-        updateCandidateInfo
-          ? res.status(200).json({ "Candidate created": { candidate, id } })
-          : res
-              .status(400)
-              .json({ Error: "No se ha creado ni modificado información" });
-      } catch (err) {
-        console.log(err);
-        res.status(400).send(err);
-      }
-    }
-  }
-);
+//         console.log("Candidato agregado", updateCandidateInfo);
+//         updateCandidateInfo
+//           ? res.status(200).json({ "Candidate created": { candidate, id } })
+//           : res
+//               .status(400)
+//               .json({ Error: "No se ha creado ni modificado información" });
+//       } catch (err) {
+//         console.log(err);
+//         res.status(400).send(err);
+//       }
+//     }
+//   }
+// );
 
 interviewRouter.get("/inputFields", async (req: Request, res: Response) => {
   const schemaAttributes = await Candidate.schema.eachPath(function (
