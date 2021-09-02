@@ -1,6 +1,5 @@
 import express from "express"
-import { interviewRouter } from './routes/interviewRoutes';
-import { userRouter } from './routes/userRoutes'
+import { interviewRouter, userRouter } from './routes';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv'
 import cors from 'cors'

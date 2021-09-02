@@ -6,11 +6,12 @@ import {
   pushCandidateIntoUser,
 } from "../services/candidate.services";
 
-export const postCandidate = async (req: Request, res: Response) => {
+const postCandidate = async (req: Request, res: Response) => {
   // @ts-ignore
   const userEmail = req.user[`${process.env.AUTH0_AUDIENCE}/email`];
   let { candidate, id, info } = req.body;
   const candidateInDb = await isCandidateInUser(userEmail, id);
+
   if (candidateInDb.length > 0) {
     try {
       const candidateUpdate = await updateCandidateInfo(userEmail, req.body);
@@ -29,10 +30,9 @@ export const postCandidate = async (req: Request, res: Response) => {
       res.status(200).json({ "Candidate created": { candidate, id } });
     } catch (err) {
       console.log(err);
-      res.status(500).json({
-        Error: "Error when saving new candidate's information",
-        errmsg: err,
-      });
+      res.status(500).json({ Error: err });
     }
   }
 };
+
+export default postCandidate

@@ -1,11 +1,9 @@
 import { Router, Request, Response } from 'express'
-import { checkPermissions } from '../middleware/permissions.middleware';
-import { checkJwt } from '../middleware/authz.middleware';
+import { checkPermissions, checkJwt } from '../middleware';
 import { CandidatePermission } from "../candidates/candidate-permission";
 import { User } from "../models/userModel";
 
-
-export const userRouter = Router()
+const userRouter = Router()
 userRouter.use(checkJwt);
 
 userRouter.post(
@@ -46,3 +44,5 @@ userRouter.post(
       }
     }
   );
+
+  export default userRouter

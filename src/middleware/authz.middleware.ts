@@ -4,7 +4,7 @@ import * as dotenv from "dotenv";
 
 dotenv.config();
 
-export const checkJwt = jwt({
+const checkJwt = jwt({
   secret: jwksRsa.expressJwtSecret({
     cache: true,
     rateLimit: true,
@@ -17,3 +17,5 @@ export const checkJwt = jwt({
   issuer: `https://${process.env.AUTH0_DOMAIN}/`,
   algorithms: ["RS256"]
 });
+
+export default checkJwt

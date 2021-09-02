@@ -1,6 +1,8 @@
 import { User } from "../models/userModel";
 import { Candidate } from "../models/candidateModel";
 
+//Checks by user's email and candidate ID if this candidate has any instance created
+// at the user collection. 
 export const isCandidateInUser = async (userEmail: any, candidateId: any) => {
   return await User.find({
     email: userEmail,
@@ -59,3 +61,24 @@ export const pushCandidateIntoUser = async (userEmail: any, candidate: any) => {
     throw new Error("Error when saving candidate's information") 
   }
 };
+
+export const findCandidate = async (userEmail: any, idCandidato:any) => {
+  const retrieveCandidate = await User.aggregate([
+    {
+      $match: {
+        email: userEmail,
+      },
+    },
+    {
+      $unwind: "$candidates",
+    },
+    {
+      $match: {
+        "candidates.candidateId": parseInt(idCandidato),
+      },
+    },
+  ]);
+
+  return retrieveCandidate
+
+}

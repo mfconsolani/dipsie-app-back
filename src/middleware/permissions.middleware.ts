@@ -1,12 +1,14 @@
 const jwtAuthz = require("express-jwt-authz");
 
-export const checkPermissions = (permissions: string | string[]) => {
+const checkPermissions = (permissions: string | string[]) => {
   return jwtAuthz([permissions], {
     customScopeKey: "permissions",
     checkAllScopes: true,
     failWithError: true
   });
 };
+
+export default checkPermissions
 
 // Here use a JavaScript closure to create a re-usable functional wrapper for jwtAuthz. 
 // The checkPermissions helper function takes as arguments the permissions required and 
