@@ -1,24 +1,17 @@
-import express from "express"
-import { interviewRouter, userRouter } from './routes';
 import mongoose from 'mongoose';
 import dotenv from 'dotenv'
-import cors from 'cors'
+import * as config from './config'
+import app from './app';
+import {token} from './helpers'
 
-
-// App Config
-
-const app = express();
 dotenv.config()
 
-// Middleware
-app.use(express.json())
-app.use(cors())
-app.use('/interview', interviewRouter)
-app.use('/user', userRouter)
+console.log(token)
 
 // Database Config
 
-mongoose.connect(`mongodb://127.0.0.1:27017/${process.env.DB_DATA_BASE}`,
+mongoose.connect(
+    config.MONGODB_URI,
 // mongoose.connect("mongodb://mongo:27017/pixie",
 
     {
