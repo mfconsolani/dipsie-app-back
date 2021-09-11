@@ -7,7 +7,7 @@ const interviewRouter = Router();
 interviewRouter.use(checkJwt);
 
 interviewRouter.get("/", (req: Request, res: Response) => {
-  res.send("interview endpoint");
+  res.status(200).json("interview endpoint");
 });
 
 interviewRouter.post(

@@ -2,11 +2,8 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv'
 import * as config from './config'
 import app from './app';
-import {token} from './helpers'
 
 dotenv.config()
-
-console.log(token)
 
 // Database Config
 
