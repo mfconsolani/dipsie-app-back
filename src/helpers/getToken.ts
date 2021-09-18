@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { server } from '../server'
 
 var options = {
     url: `https://${process.env.AUTH0_DOMAIN}/oauth/token`,
@@ -20,7 +19,6 @@ var options = {
     try {
       const tokenRequest = await axios.post(options.url, options.form)
       // console.log(tokenRequest)
-      server.close()
       return tokenRequest.data.access_token
     } catch (err){
       console.log(err)

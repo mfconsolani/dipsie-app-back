@@ -24,7 +24,7 @@ db.once('open', () => console.log(`App connected to "${db.name}" database`))
 
 
 // Server Config
-const PORT = process.env.NODE_ENV === 'development' ? 8080 : 7070
+const PORT = process.env.NODE_ENV === 'development' ? 8080 : null
 
 export const server = app.listen(PORT, () => {
     console.log(`App running on port ${PORT}`)
