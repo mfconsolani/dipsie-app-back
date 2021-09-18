@@ -18,7 +18,6 @@ var options = {
   const token = async () => {
     try {
       const tokenRequest = await axios.post(options.url, options.form)
-      // console.log(tokenRequest)
       return tokenRequest.data.access_token
     } catch (err){
       console.log(err)
