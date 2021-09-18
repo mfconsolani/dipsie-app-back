@@ -7,10 +7,7 @@
     "start": "NODE_ENV=production node dist/server.js",
     "dev": "NODE_ENV=development ts-node-dev src/server.ts",
     "build": "tsc -p .",
-    "test": "NODE_ENV=test jest --verbose --runInBand dist/test/"
-  },
-  "jest": {
-    "testEnvironment": "node"
+    "test": "NODE_ENV=test jest --verbose --runInBand --detectOpenHandles dist/test/"
   },
   "repository": {
     "type": "git",
@@ -33,6 +30,7 @@
     "mongoose": "^5.12.10"
   },
   "devDependencies": {
+    "@shelf/jest-mongodb": "^2.0.3",
     "@types/axios": "^0.14.0",
     "@types/cors": "^2.8.10",
     "@types/express": "^4.17.11",
