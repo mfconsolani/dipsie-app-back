@@ -27,7 +27,6 @@ beforeAll(async() => {
     await Promise.all(authToken)
 });
 
-// @ts-ignore
 describe("GET /interview/ endpoint", () => {
   test("With auth0 token", async () => {
     try {
