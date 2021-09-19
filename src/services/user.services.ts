@@ -11,7 +11,7 @@ export const createNewUser = async (request: any) => {
     username,
     email,
     role,
-    candidates: candidates
+    candidates: candidates.length > 0
       ? {
           candidateName: candidates.candidate,
           candidateId: candidates.id,

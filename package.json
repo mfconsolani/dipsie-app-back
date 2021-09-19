@@ -7,7 +7,7 @@
     "start": "NODE_ENV=production node dist/server.js",
     "dev": "NODE_ENV=development ts-node-dev src/server.ts",
     "build": "tsc -p .",
-    "test": "NODE_ENV=test jest --verbose --runInBand --detectOpenHandles dist/test/"
+    "test": "NODE_ENV=test jest --verbose --runInBand dist/test/"
   },
   "repository": {
     "type": "git",

@@ -106,4 +106,5 @@ dist
 
 # OtherModules
 src/helpers/getToken.ts
+src/test/user.ts
 
