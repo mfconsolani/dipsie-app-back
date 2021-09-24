@@ -68,10 +68,6 @@ describe("GET /interview/ endpoint", () => {
 });
 
 describe("POST /user/", () => {
-  // beforeEach(async () => {
-  //   await User.deleteMany();
-  //   console.log(await userToCreate[0])
-  // });
 
   test("Create user with token and permissions", async () => {
     try {
@@ -108,18 +104,18 @@ describe("POST /user/", () => {
 });
 
 describe("POST /interview/", () => {
-  // beforeEach(async () => {
-  //   // await User.deleteMany();
-  //   // console.log(await userToCreate[0])
-  // });
 
   test("Create candidate with token and permissions", async () => {
-    // try {
       const response = await api
         .post("/interview/")
         .set("Authorization", "Bearer " + authToken)
         .send(candidateThree)
         .expect(200);
+
+        expect(response.body["Candidate created"])
+        .toMatchObject({ candidate: candidateThree.candidate, id: candidateThree.id })
+
+
   });
 
   test("Create candidate without token and permissions", async () => {
