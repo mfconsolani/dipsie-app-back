@@ -27,6 +27,5 @@ jobs:
           TEST_USER_PSW: ${{ secrets.TEST_USER_PSW }}
           MONGO_USERNAME: ${{ secrets.MONGO_USERNAME }}
           MONGO_PSW: ${{ secrets.MONGO_PSW }}
-      - run: echo "Test finished"
 
   
