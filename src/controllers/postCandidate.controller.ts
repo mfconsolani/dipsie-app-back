@@ -7,6 +7,7 @@ import {
 } from "../services/candidate.services";
 
 const postCandidate = async (req: Request, res: Response) => {
+  // console.log(req)
   // @ts-ignore
   const userEmail = req.user[`${process.env.AUTH0_AUDIENCE}/email`];
   let { candidate, id, info } = req.body;

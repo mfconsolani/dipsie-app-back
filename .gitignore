@@ -105,5 +105,4 @@ dist
 .tern-port
 
 # OtherModules
-src/helpers/getToken.ts
 
