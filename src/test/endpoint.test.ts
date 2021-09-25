@@ -84,7 +84,7 @@ describe("POST /user/", () => {
         .expect(200);
 
       const findUser = await User.find({ email: userAdmin.email });
-      expect(findUser[0].email).toMatch(userAdmin.email);
+      expect(findUser[0].email).toContain(userAdmin.email);
     } catch (err) {
       console.log(err);
     }
