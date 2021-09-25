@@ -10,7 +10,7 @@ jobs:
         node-version: '14'
         cache: 'npm'
     - run: npm install
-    - run: npm test
+    - run: npm run test
       env: 
         MONGODB_DEV: ${{ secrets.MONGODB_DEV }}
         MONGODB_TEST: ${{ secrets.MONGODB_TEST }}
