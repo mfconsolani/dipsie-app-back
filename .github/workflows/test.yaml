@@ -4,28 +4,25 @@ jobs:
   first-job:
     runs-on: ubuntu-latest
     steps:
-      - name: Checking out repo
-      - uses: actions/checkout@v2
-      - name: Installing node
-      - uses: actions/setup-node@v2
-        with:
-          node-version: '14'
-      - name: Installing dependencies
-      - run: npm install
-      - name: Running Tests
-      - run: npm test
-      - env: 
-          MONGODB_DEV: ${{ secrets.MONGODB_DEV }}
-          MONGODB_TEST: ${{ secrets.MONGODB_TEST }}
-          AUTH0_AUDIENCE: ${{ secrets.AUTH0_AUDIENCE }}
-          AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
-          CLIENT_ID: ${{ secrets.CLIENT_ID }}
-          CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-          GRANT_TYPE: ${{ secrets.GRANT_TYPE }}
-          SCOPE: ${{ secrets.SCOPE }}
-          TEST_USER: ${{ secrets.TEST_USER }}
-          TEST_USER_PSW: ${{ secrets.TEST_USER_PSW }}
-          MONGO_USERNAME: ${{ secrets.MONGO_USERNAME }}
-          MONGO_PSW: ${{ secrets.MONGO_PSW }}
+    - uses: actions/checkout@v2
+    - uses: actions/setup-node@v2
+      with:
+        node-version: '14'
+        cache: 'npm'
+    - run: npm install
+    - run: npm test
+    - env: 
+        MONGODB_DEV: ${{ secrets.MONGODB_DEV }}
+        MONGODB_TEST: ${{ secrets.MONGODB_TEST }}
+        AUTH0_AUDIENCE: ${{ secrets.AUTH0_AUDIENCE }}
+        AUTH0_DOMAIN: ${{ secrets.AUTH0_DOMAIN }}
+        CLIENT_ID: ${{ secrets.CLIENT_ID }}
+        CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+        GRANT_TYPE: ${{ secrets.GRANT_TYPE }}
+        SCOPE: ${{ secrets.SCOPE }}
+        TEST_USER: ${{ secrets.TEST_USER }}
+        TEST_USER_PSW: ${{ secrets.TEST_USER_PSW }}
+        MONGO_USERNAME: ${{ secrets.MONGO_USERNAME }}
+        MONGO_PSW: ${{ secrets.MONGO_PSW }} 
 
   
