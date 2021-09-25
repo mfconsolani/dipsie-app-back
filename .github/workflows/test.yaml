@@ -11,7 +11,7 @@ jobs:
         cache: 'npm'
     - run: npm install
     - run: npm test
-    - env: 
+      env: 
         MONGODB_DEV: ${{ secrets.MONGODB_DEV }}
         MONGODB_TEST: ${{ secrets.MONGODB_TEST }}
         AUTH0_AUDIENCE: ${{ secrets.AUTH0_AUDIENCE }}
