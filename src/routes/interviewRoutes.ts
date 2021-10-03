@@ -4,11 +4,11 @@ import { CandidatePermission } from "../candidates/candidate-permission";
 import { postCandidate, getCandidate } from "../controllers";
 
 const interviewRouter = Router();
-interviewRouter.use(checkJwt);
-
 interviewRouter.get("/", (req: Request, res: Response) => {
   res.status(200).json("interview endpoint");
 });
+interviewRouter.use(checkJwt);
+
 
 interviewRouter.post(
   "/",
