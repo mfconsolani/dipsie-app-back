@@ -1,5 +1,5 @@
 import express from "express"
-import { interviewRouter, userRouter } from './routes';
+import { interviewRouter, userRouter, healthCheck } from './routes';
 import cors from 'cors'
 
 // App Config
@@ -10,6 +10,7 @@ const app = express();
 
 app.use(express.json())
 app.use(cors())
+app.use('/health', healthCheck)
 app.use('/interview', interviewRouter)
 app.use('/user', userRouter)
 
