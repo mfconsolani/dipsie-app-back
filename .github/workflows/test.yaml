@@ -25,5 +25,8 @@ jobs:
         TEST_USER_PSW: ${{ secrets.TEST_USER_PSW }}
         MONGO_USERNAME: ${{ secrets.MONGO_USERNAME }}
         MONGO_PSW: ${{ secrets.MONGO_PSW }} 
+        MONGO_TEST_USER: ${{ secrets.MONGO_TEST_USER }}
+        MONGO_TEST_PSW: ${{ secrets.MONGO_TEST_PSW }}
+        MONGODB_PRODUCTION: ${{ secrets.MONGODB_PRODUCTION }}
 
   

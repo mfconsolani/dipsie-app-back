@@ -9,8 +9,6 @@ dotenv.config()
 
 mongoose.connect(
     config.MONGODB_URI,
-// mongoose.connect("mongodb://mongo:27017/pixie",
-
     {
         useNewUrlParser: true, 
         useUnifiedTopology: true,
@@ -20,7 +18,9 @@ mongoose.connect(
 mongoose.set('useFindAndModify', false);
 const db = mongoose.connection;
 db.on('error', console.error.bind(console, 'Console Error:'))
-db.once('open', () => console.log(`App connected to "${db.name}" database`))
+db.once('open', () => {
+    console.log(`App connected to "${db.name}" database`)
+})
 
 
 // Server Config
