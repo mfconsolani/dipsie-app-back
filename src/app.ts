@@ -1,5 +1,5 @@
 import express from "express"
-import { interviewRouter, userRouter } from './routes';
+import { interviewRouter, userRouter, healthCheck } from './routes';
 import cors from 'cors'
 
 // App Config
@@ -18,6 +18,7 @@ app.use(function(req, res, next) {
   next()
 })
 app.use(cors())
+app.use('/health', healthCheck)
 app.use('/interview', interviewRouter)
 app.use('/user', userRouter)
 
