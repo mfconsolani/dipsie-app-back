@@ -18,7 +18,7 @@ app.use(function(req, res, next) {
   next()
 })
 app.use(cors())
-app.use('/health', healthCheck)
+app.use('/', healthCheck)
 app.use('/interview', interviewRouter)
 app.use('/user', userRouter)
 
